@@ -1,0 +1,21 @@
+name: flutter_download_manager
+description: Flutter Download Manager is a cross platform download manager built on top of the Dio Http client. It can be used to resumeis used to display data in graph structures. It can display Tree layout, Directed and Layered graph. Useful for Family Tree, Hierarchy View.
+version: 0.5.0
+homepage: https://github.com/nabil6391/flutter_download_manager
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^4.0.6
+  path_provider: ^2.0.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
