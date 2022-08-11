@@ -46,7 +46,6 @@ class DownloadManager {
       if (fileExist) {
         print("File Exists");
         setStatus(url, DownloadStatus.success);
-        return;
       } else if (partialFileExist) {
         print("Partial File Exists");
         setStatus(url, DownloadStatus.downloading);
