@@ -14,13 +14,13 @@ void main() {
 
     dl.addDownload(url4, "./test.mp4");
 
-    DownloadTask task = dl.getDownload(url4);
+    DownloadTask? task = dl.getDownload(url4);
 
-    task.status.addListener(() {
+    task?.status.addListener(() {
       print(task.status.value);
     });
 
-    task.progress.addListener(() {
+    task?.progress.addListener(() {
       print(task.progress.value);
     });
 
@@ -33,21 +33,21 @@ void main() {
     dl.addDownload(url3, "./test3.ipa");
     dl.addDownload(url, "./test.ipa");
 
-    DownloadTask task = dl.getDownload(url);
+    DownloadTask? task = dl.getDownload(url);
 
-    task.status.addListener(() {
+    task?.status.addListener(() {
       print(task.status.value);
     });
 
-    DownloadTask task2 = dl.getDownload(url2);
+    DownloadTask? task2 = dl.getDownload(url2);
 
-    task2.status.addListener(() {
+    task2?.status.addListener(() {
       print(task2.status.value);
     });
 
-    DownloadTask task3 = dl.getDownload(url3);
+    DownloadTask? task3 = dl.getDownload(url3);
 
-    task3.status.addListener(() {
+    task3?.status.addListener(() {
       print(task3.status.value);
     });
 
@@ -58,13 +58,13 @@ void main() {
 
     dl.addDownload(url5, "./test2.mp4");
 
-    DownloadTask task = dl.getDownload(url5);
+    DownloadTask? task = dl.getDownload(url5);
 
     Future.delayed(Duration(milliseconds: 500), () {
       dl.cancelDownload(url5);
     });
 
-    task.status.addListener(() {
+    task?.status.addListener(() {
       print(task.status.value);
     });
 
@@ -75,7 +75,7 @@ void main() {
 
     dl.addDownload(url5, "./test2.mp4");
 
-    DownloadTask task = dl.getDownload(url5);
+    DownloadTask? task = dl.getDownload(url5);
 
     Future.delayed(Duration(milliseconds: 500), () {
       dl.pauseDownload(url5);
@@ -85,7 +85,7 @@ void main() {
       dl.resumeDownload(url5);
     });
 
-    task.status.addListener(() {
+    task?.status.addListener(() {
       print(task.status.value);
     });
 

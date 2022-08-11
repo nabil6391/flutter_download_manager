@@ -1,3 +1,3 @@
-library flutter_multiple_downloder;
+library flutter_downlod_manager;
 
 export 'src/downloader.dart';

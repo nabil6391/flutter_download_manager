@@ -20,13 +20,15 @@ class DownloadManager {
 
   DownloadManager._internal() {}
 
-  factory DownloadManager({int maxConcurrentTasks}) {
-    _localRepository.maxConcurrentTasks = maxConcurrentTasks;
+  factory DownloadManager({int? maxConcurrentTasks}) {
+    if (maxConcurrentTasks != null) {
+      _localRepository.maxConcurrentTasks = maxConcurrentTasks;
+    }
     return _localRepository;
   }
 
   void Function(int, int) createCallback(url) => (int received, int total) {
-        getDownload(url)?.progress?.value = received / total;
+        getDownload(url)?.progress.value = received / total;
 
         if (total == -1) {}
       };
@@ -83,7 +85,7 @@ class DownloadManager {
     } catch (e) {
       print(e);
 
-      var task = getDownload(url);
+      var task = getDownload(url)!;
       if (task.status.value != DownloadStatus.canceled &&
           task.status.value != DownloadStatus.paused) {
         task.status.value = DownloadStatus.failed;
@@ -114,7 +116,7 @@ class DownloadManager {
   }
 
   Future<void> pauseDownload(String url) async {
-    var task = getDownload(url);
+    var task = getDownload(url)!;
     task.status.value = DownloadStatus.paused;
     task.request.cancelToken.cancel();
 
@@ -122,7 +124,7 @@ class DownloadManager {
   }
 
   Future<void> cancelDownload(String url) async {
-    var task = getDownload(url);
+    var task = getDownload(url)!;
     task.status.value = DownloadStatus.canceled;
     _queue.remove(task.request);
     task.request.cancelToken.cancel();
@@ -132,19 +134,19 @@ class DownloadManager {
     if (_queue.isEmpty) {
       c = Completer();
     }
-    var task = getDownload(url);
+    var task = getDownload(url)!;
     task.status.value = DownloadStatus.downloading;
     _queue.add(task.request);
 
     _startExecution();
   }
 
-  DownloadTask getDownload(String url) {
+  DownloadTask? getDownload(String url) {
     return _cache[url];
   }
 
   List<DownloadTask> getAllDownloads() {
-    return _cache.values;
+    return _cache.values as List<DownloadTask>;
   }
 
   void _startExecution() async {
