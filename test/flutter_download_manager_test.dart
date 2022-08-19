@@ -26,7 +26,7 @@ void main() {
       print(task.progress.value);
     });
 
-    await dl.whenComplete(url4);
+    await dl.whenDownloadComplete(url4);
   });
 
   test('parallel download', () async {
@@ -108,7 +108,7 @@ void main() {
       print(task.status.value);
     });
 
-    await dl.whenComplete("");
+    await dl.whenDownloadComplete("");
   });
 
   test('handle empty path', () async {
@@ -122,7 +122,7 @@ void main() {
       print(task.status.value);
     });
 
-    await dl.whenComplete(url3);
+    await dl.whenDownloadComplete(url3);
   });
 
   test('handle url with empty extension', () async {
@@ -136,7 +136,7 @@ void main() {
       print(task.status.value);
     });
 
-    await dl.whenComplete(url6);
+    await dl.whenDownloadComplete(url6);
   });
 
   test('download in batch', () async {
@@ -157,7 +157,7 @@ void main() {
       print(downloadProgress.value);
     });
 
-    await dl.whenCompletes(urls);
+    await dl.whenDownloadsComplete(urls);
   });
 
   test('cancel a batched download', () async {
@@ -179,7 +179,7 @@ void main() {
 
     dl.cancelDownloads(urls);
 
-    await dl.whenCompletes(urls);
+    await dl.whenDownloadsComplete(urls);
   });
 
   test('cancel a single item in a batched download', () async {
@@ -201,6 +201,6 @@ void main() {
 
     dl.cancelDownload(url3);
 
-    await dl.whenCompletes(urls);
+    await dl.whenDownloadsComplete(urls);
   });
 }

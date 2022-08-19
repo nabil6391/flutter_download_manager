@@ -43,7 +43,9 @@ class DownloadManager {
       }
       setStatus(task, DownloadStatus.downloading);
 
-      print(url);
+      if (kDebugMode) {
+        print(url);
+      }
       var file = File(savePath.toString());
       var partialFilePath = savePath + partialExtension;
       var partialFile = File(partialFilePath);
@@ -52,10 +54,14 @@ class DownloadManager {
       var partialFileExist = await partialFile.exists();
 
       if (fileExist) {
-        print("File Exists");
+        if (kDebugMode) {
+          print("File Exists");
+        }
         setStatus(task, DownloadStatus.completed);
       } else if (partialFileExist) {
-        print("Partial File Exists");
+        if (kDebugMode) {
+          print("Partial File Exists");
+        }
 
         var partialFileLength = await partialFile.length();
 
@@ -165,7 +171,7 @@ class DownloadManager {
     return _cache[url];
   }
 
-  Future<DownloadStatus> whenComplete(String url) async {
+  Future<DownloadStatus> whenDownloadComplete(String url) async {
     var completer = Completer<DownloadStatus>();
 
     DownloadTask? task = getDownload(url);
@@ -251,8 +257,8 @@ class DownloadManager {
     return progress;
   }
 
-  Future<DownloadStatus> whenCompletes(List<String> urls) async {
-    var completer = Completer<DownloadStatus>();
+  Future<List<DownloadTask?>> whenDownloadsComplete(List<String> urls) async {
+    var completer = Completer<List<DownloadTask?>>();
 
     var completed = 0;
     var total = urls.length;
@@ -265,7 +271,7 @@ class DownloadManager {
           completed++;
 
           if (completed == total) {
-            completer.complete(DownloadStatus.completed);
+            completer.complete(getDownloads(urls));
           }
         }
 
@@ -274,7 +280,7 @@ class DownloadManager {
             completed++;
 
             if (completed == total) {
-              completer.complete(DownloadStatus.completed);
+              completer.complete(getDownloads(urls));
             }
           }
         });
@@ -293,8 +299,9 @@ class DownloadManager {
 
     while (_queue.isNotEmpty && runningTasks < maxConcurrentTasks) {
       runningTasks++;
-      print('Concurrent workers: $runningTasks');
-
+      if (kDebugMode) {
+        print('Concurrent workers: $runningTasks');
+      }
       var currentRequest = _queue.removeFirst();
 
       download(currentRequest.url, currentRequest.path, currentRequest.cancelToken);
