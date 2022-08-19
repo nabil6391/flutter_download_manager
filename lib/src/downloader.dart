@@ -4,12 +4,13 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_download_manager/flutter_download_manager.dart';
+import 'package:path/path.dart' as p;
 
 class DownloadManager {
   final Map<String, DownloadTask> _cache = <String, DownloadTask>{};
   final Queue<DownloadRequest> _queue = Queue();
   var dio = Dio();
-  var c = Completer();
   static const partialExtension = ".partial";
   static const tempExtension = ".temp";
 
@@ -35,6 +36,13 @@ class DownloadManager {
 
   Future<void> download(String url, String savePath, cancelToken, {forceDownload = false}) async {
     try {
+      var task = getDownload(url);
+
+      if (task == null || task.status.value == DownloadStatus.canceled) {
+        return;
+      }
+      setStatus(task, DownloadStatus.downloading);
+
       print(url);
       var file = File(savePath.toString());
       var partialFilePath = savePath + partialExtension;
@@ -45,10 +53,9 @@ class DownloadManager {
 
       if (fileExist) {
         print("File Exists");
-        setStatus(url, DownloadStatus.success);
+        setStatus(task, DownloadStatus.completed);
       } else if (partialFileExist) {
         print("Partial File Exists");
-        setStatus(url, DownloadStatus.downloading);
 
         var partialFileLength = await partialFile.length();
 
@@ -68,48 +75,65 @@ class DownloadManager {
           await ioSink.close();
           await partialFile.rename(savePath);
 
-          setStatus(url, DownloadStatus.success);
+          setStatus(task, DownloadStatus.completed);
         }
       } else {
-        setStatus(url, DownloadStatus.downloading);
-
         var response = await dio.download(url, partialFilePath,
             onReceiveProgress: createCallback(url), cancelToken: cancelToken, deleteOnError: false);
 
         if (response.statusCode == HttpStatus.ok) {
           await partialFile.rename(savePath);
-          setStatus(url, DownloadStatus.success);
+          setStatus(task, DownloadStatus.completed);
         }
       }
     } catch (e) {
-      print(e);
-
       var task = getDownload(url)!;
       if (task.status.value != DownloadStatus.canceled &&
           task.status.value != DownloadStatus.paused) {
         task.status.value = DownloadStatus.failed;
+        disposeNotifiers(task);
+        rethrow;
       }
     }
 
     runningTasks--;
 
-    if (_queue.isEmpty) {
-      c.complete("complete");
-    } else {
+    if (_queue.isNotEmpty) {
       _startExecution();
     }
   }
 
-  void setStatus(String url, status) {
-    getDownload(url)?.status?.value = status;
+  void disposeNotifiers(DownloadTask task) {
+    task.status.dispose();
+    task.progress.dispose();
+  }
+
+  void setStatus(DownloadTask? task, DownloadStatus status) {
+    if (task != null) {
+      task.status.value = status;
+
+      if (status.isCompleted) {
+        disposeNotifiers(task);
+      }
+    }
   }
 
   Future<void> addDownload(String url, String savedDir) async {
-    if (_queue.isEmpty) {
-      c = Completer();
+    if (url.isNotEmpty) {
+      if (savedDir.isEmpty) {
+        savedDir = ".";
+      }
+      var hasExtension = p.extension(savedDir, 2).isNotEmpty;
+
+      var downloadFilename = hasExtension ? savedDir : savedDir + "/" + getFileNameFromUrl(url);
+
+      _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
-    _queue.add(DownloadRequest(url, savedDir));
-    _cache[url] = DownloadTask(_queue.last);
+  }
+
+  Future<void> _addDownloadRequest(DownloadRequest downloadRequest) async {
+    _queue.add(DownloadRequest(downloadRequest.url, downloadRequest.path));
+    _cache[downloadRequest.url] = DownloadTask(_queue.last);
 
     _startExecution();
   }
@@ -130,9 +154,6 @@ class DownloadManager {
   }
 
   Future<void> resumeDownload(String url) async {
-    if (_queue.isEmpty) {
-      c = Completer();
-    }
     var task = getDownload(url)!;
     task.status.value = DownloadStatus.downloading;
     _queue.add(task.request);
@@ -144,8 +165,125 @@ class DownloadManager {
     return _cache[url];
   }
 
+  Future<DownloadStatus> whenComplete(String url) async {
+    var completer = Completer<DownloadStatus>();
+
+    DownloadTask? task = getDownload(url);
+
+    if (task != null) {
+      if (task.status.value.isCompleted) {
+        completer.complete(task.status.value);
+      }
+
+      task.status.addListener(() {
+        if (task.status.value.isCompleted) {
+          completer.complete(task.status.value);
+        }
+      });
+    } else {
+      completer.completeError("Not Found");
+    }
+
+    return completer.future;
+  }
+
   List<DownloadTask> getAllDownloads() {
     return _cache.values as List<DownloadTask>;
+  }
+
+  // Batch Download Mechanism
+  Future<void> addDownloads(List<String> urls, String savedDir) async {
+    urls.forEach((url) {
+      addDownload(url, savedDir);
+    });
+  }
+
+  List<DownloadTask?> getDownloads(List<String> urls) {
+    return urls.map((e) => _cache[e]).toList();
+  }
+
+  Future<void> pauseDownloads(List<String> urls) async {
+    urls.forEach((element) {
+      pauseDownload(element);
+    });
+  }
+
+  Future<void> cancelDownloads(List<String> urls) async {
+    urls.forEach((element) {
+      cancelDownload(element);
+    });
+  }
+
+  Future<void> resumeDownloads(List<String> urls) async {
+    urls.forEach((element) {
+      resumeDownload(element);
+    });
+  }
+
+  ValueNotifier<double> getDownloadProgress(List<String> urls) {
+    ValueNotifier<double> progress = ValueNotifier(0);
+
+    var completed = 0;
+    var total = urls.length;
+
+    urls.forEach((url) {
+      DownloadTask? task = getDownload(url);
+
+      if (task != null) {
+        if (task.status.value.isCompleted) {
+          completed++;
+
+          progress.value = completed / total;
+        }
+
+        task.status.addListener(() {
+          if (task.status.value.isCompleted) {
+            completed++;
+
+            progress.value = completed / total;
+          }
+        });
+      } else {
+        total--;
+      }
+    });
+
+    return progress;
+  }
+
+  Future<DownloadStatus> whenCompletes(List<String> urls) async {
+    var completer = Completer<DownloadStatus>();
+
+    var completed = 0;
+    var total = urls.length;
+
+    urls.forEach((url) {
+      DownloadTask? task = getDownload(url);
+
+      if (task != null) {
+        if (task.status.value.isCompleted) {
+          completed++;
+
+          if (completed == total) {
+            completer.complete(DownloadStatus.completed);
+          }
+        }
+
+        task.status.addListener(() {
+          if (task.status.value.isCompleted) {
+            completed++;
+
+            if (completed == total) {
+              completer.complete(DownloadStatus.completed);
+            }
+          }
+        });
+      } else {
+        total--;
+      }
+    });
+
+    return completer.future;
   }
 
   void _startExecution() async {
@@ -158,33 +296,15 @@ class DownloadManager {
       print('Concurrent workers: $runningTasks');
 
       var currentRequest = _queue.removeFirst();
-      download(currentRequest.name, currentRequest.path, currentRequest.cancelToken);
+
+      download(currentRequest.url, currentRequest.path, currentRequest.cancelToken);
 
       await Future.delayed(Duration(milliseconds: 500), null);
     }
   }
+
+  /// This function is used for get file name with extension from url
+  String getFileNameFromUrl(String url) {
+    return url.split('/').last;
+  }
 }
-
-class DownloadRequest {
-  final String name;
-  final String path;
-  var cancelToken = CancelToken();
-  var forceDownload = false;
-
-  DownloadRequest(
-    this.name,
-    this.path,
-  );
-}
-
-class DownloadTask {
-  final DownloadRequest request;
-  ValueNotifier<DownloadStatus> status = ValueNotifier(DownloadStatus.queued);
-  ValueNotifier<double> progress = ValueNotifier(0);
-
-  DownloadTask(
-    this.request,
-  );
-}
-
-enum DownloadStatus { queued, downloading, success, failed, paused, canceled }
