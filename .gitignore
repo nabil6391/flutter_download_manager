@@ -24,3 +24,4 @@ doc/api/
 /.flutter-plugins-dependencies
 /.flutter-plugins
 /flutter_download_manager.iml
+/example/.metadata
