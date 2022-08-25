@@ -201,20 +201,10 @@ class DownloadManager {
     DownloadTask? task = getDownload(url);
 
     if (task != null) {
-      if (task.status.value.isCompleted) {
-        completer.complete(task.status.value);
-      }
-
-      task.status.addListener(() {
-        if (task.status.value.isCompleted) {
-          completer.complete(task.status.value);
-        }
-      });
+      return task.whenDownloadComplete(timeout: timeout);
     } else {
-      completer.completeError("Not Found");
+      return Future.error("Not found");
     }
-
-    return completer.future;
   }
 
   List<DownloadTask> getAllDownloads() {
