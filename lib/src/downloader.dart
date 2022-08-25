@@ -260,13 +260,17 @@ class DownloadManager {
           progress.value = completed / total;
         }
 
-        task.status.addListener(() {
+        var listener;
+        listener = () {
           if (task.status.value.isCompleted) {
             completed++;
 
             progress.value = completed / total;
+            task.status.removeListener(listener);
           }
-        });
+        };
+
+        task.status.addListener(listener);
       } else {
         total--;
       }
@@ -290,19 +294,23 @@ class DownloadManager {
           completed++;
 
           if (completed == total) {
-            completer.complete(getDownloads(urls));
+            completer.complete(getBatchDownloads(urls));
           }
         }
 
-        task.status.addListener(() {
+        var listener;
+        listener = () {
           if (task.status.value.isCompleted) {
             completed++;
 
             if (completed == total) {
-              completer.complete(getDownloads(urls));
+              completer.complete(getBatchDownloads(urls));
+              task.status.removeListener(listener);
             }
           }
-        });
+        };
+
+        task.status.addListener(listener);
       } else {
         total--;
       }
