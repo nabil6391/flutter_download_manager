@@ -195,9 +195,8 @@ class DownloadManager {
     return _cache[url];
   }
 
-  Future<DownloadStatus> whenDownloadComplete(String url) async {
-    var completer = Completer<DownloadStatus>();
-
+  Future<DownloadStatus> whenDownloadComplete(String url,
+      {Duration timeout = const Duration(hours: 2)}) async {
     DownloadTask? task = getDownload(url);
 
     if (task != null) {
