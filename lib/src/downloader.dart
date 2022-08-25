@@ -154,6 +154,9 @@ class DownloadManager {
   }
 
   Future<void> pauseDownload(String url) async {
+    if (kDebugMode) {
+      print("Pause Download");
+    }
     var task = getDownload(url)!;
     task.status.value = DownloadStatus.paused;
     task.request.cancelToken.cancel();
@@ -162,6 +165,9 @@ class DownloadManager {
   }
 
   Future<void> cancelDownload(String url) async {
+    if (kDebugMode) {
+      print("Cancel Download");
+    }
     var task = getDownload(url)!;
     task.status.value = DownloadStatus.canceled;
     _queue.remove(task.request);
@@ -169,6 +175,9 @@ class DownloadManager {
   }
 
   Future<void> resumeDownload(String url) async {
+    if (kDebugMode) {
+      print("Resume Download");
+    }
     var task = getDownload(url)!;
     task.status.value = DownloadStatus.downloading;
     _queue.add(task.request);
