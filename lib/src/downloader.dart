@@ -308,6 +308,10 @@ class DownloadManager {
         task.status.addListener(listener);
       } else {
         total--;
+
+        if (total == 0) {
+          completer.complete(null);
+        }
       }
     });
 
