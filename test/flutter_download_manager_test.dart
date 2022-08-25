@@ -54,7 +54,7 @@ void main() {
       print(task3.status.value);
     });
 
-    await dl.whenCompletes([url, url2, url3]);
+    await dl.whenBatchDownloadsComplete([url, url2, url3]);
   });
 
   test('cancel download', () async {
@@ -151,13 +151,13 @@ void main() {
     dl.addDownload(url3, "./test3.ipa");
     dl.addDownload(url, "./test.ipa");
 
-    var downloadProgress = dl.getDownloadProgress(urls);
+    var downloadProgress = dl.getBatchDownloadProgress(urls);
 
     downloadProgress.addListener(() {
       print(downloadProgress.value);
     });
 
-    await dl.whenDownloadsComplete(urls);
+    await dl.whenBatchDownloadsComplete(urls);
   });
 
   test('cancel a batched download', () async {
@@ -167,9 +167,9 @@ void main() {
     urls.add(url6);
     urls.add(url5);
     urls.add(url);
-    dl.addDownloads(urls, ".");
+    dl.addBatchDownloads(urls, ".");
 
-    var downloads = dl.getDownloads(urls);
+    var downloads = dl.getBatchDownloads(urls);
 
     downloads.forEach((task) {
       task?.status.addListener(() {
@@ -177,9 +177,9 @@ void main() {
       });
     });
 
-    dl.cancelDownloads(urls);
+    dl.cancelBatchDownloads(urls);
 
-    await dl.whenDownloadsComplete(urls);
+    await dl.whenBatchDownloadsComplete(urls);
   });
 
   test('cancel a single item in a batched download', () async {
@@ -189,9 +189,9 @@ void main() {
     urls.add(url4);
     urls.add(url3);
     urls.add(url);
-    dl.addDownloads(urls, "");
+    dl.addBatchDownloads(urls, "");
 
-    var downloads = dl.getDownloads(urls);
+    var downloads = dl.getBatchDownloads(urls);
 
     downloads.forEach((task) {
       task?.status.addListener(() {
@@ -201,6 +201,6 @@ void main() {
 
     dl.cancelDownload(url3);
 
-    await dl.whenDownloadsComplete(urls);
+    await dl.whenBatchDownloadsComplete(urls);
   });
 }
