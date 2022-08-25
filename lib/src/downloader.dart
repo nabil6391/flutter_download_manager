@@ -180,6 +180,7 @@ class DownloadManager {
     }
     var task = getDownload(url)!;
     task.status.value = DownloadStatus.downloading;
+    task.request.cancelToken = CancelToken();
     _queue.add(task.request);
 
     _startExecution();
