@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^4.0.6
-  path_provider: ^2.0.10
 
 dev_dependencies:
   flutter_test:

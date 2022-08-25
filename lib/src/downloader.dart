@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
-import 'package:path/path.dart' as p;
 
 class DownloadManager {
   final Map<String, DownloadTask> _cache = <String, DownloadTask>{};
@@ -132,9 +131,11 @@ class DownloadManager {
       if (savedDir.isEmpty) {
         savedDir = ".";
       }
-      var hasExtension = p.extension(savedDir, 2).isNotEmpty;
 
-      var downloadFilename = hasExtension ? savedDir : savedDir + "/" + getFileNameFromUrl(url);
+      var dir = Directory(savedDir);
+      var isDirectory = await dir.exists();
+
+      var downloadFilename = isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
 
       _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
