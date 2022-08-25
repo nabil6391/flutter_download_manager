@@ -100,6 +100,11 @@ class DownloadManager {
           task.status.value != DownloadStatus.paused) {
         task.status.value = DownloadStatus.failed;
         disposeNotifiers(task);
+        runningTasks--;
+
+        if (_queue.isNotEmpty) {
+          _startExecution();
+        }
         rethrow;
       }
     }
