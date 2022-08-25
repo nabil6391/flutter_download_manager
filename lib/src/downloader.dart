@@ -117,8 +117,8 @@ class DownloadManager {
   }
 
   void disposeNotifiers(DownloadTask task) {
-    task.status.dispose();
-    task.progress.dispose();
+    // task.status.dispose();
+    // task.progress.dispose();
   }
 
   void setStatus(DownloadTask? task, DownloadStatus status) {
@@ -315,7 +315,7 @@ class DownloadManager {
       }
     });
 
-    return completer.future;
+    return completer.future.timeout(timeout);
   }
 
   void _startExecution() async {
