@@ -31,6 +31,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  path_provider:
   flutter_download_manager:
     path: ../
 
