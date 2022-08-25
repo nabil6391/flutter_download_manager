@@ -201,35 +201,35 @@ class DownloadManager {
   }
 
   // Batch Download Mechanism
-  Future<void> addDownloads(List<String> urls, String savedDir) async {
+  Future<void> addBatchDownloads(List<String> urls, String savedDir) async {
     urls.forEach((url) {
       addDownload(url, savedDir);
     });
   }
 
-  List<DownloadTask?> getDownloads(List<String> urls) {
+  List<DownloadTask?> getBatchDownloads(List<String> urls) {
     return urls.map((e) => _cache[e]).toList();
   }
 
-  Future<void> pauseDownloads(List<String> urls) async {
+  Future<void> pauseBatchDownloads(List<String> urls) async {
     urls.forEach((element) {
       pauseDownload(element);
     });
   }
 
-  Future<void> cancelDownloads(List<String> urls) async {
+  Future<void> cancelBatchDownloads(List<String> urls) async {
     urls.forEach((element) {
       cancelDownload(element);
     });
   }
 
-  Future<void> resumeDownloads(List<String> urls) async {
+  Future<void> resumeBatchDownloads(List<String> urls) async {
     urls.forEach((element) {
       resumeDownload(element);
     });
   }
 
-  ValueNotifier<double> getDownloadProgress(List<String> urls) {
+  ValueNotifier<double> getBatchDownloadProgress(List<String> urls) {
     ValueNotifier<double> progress = ValueNotifier(0);
 
     var completed = 0;
@@ -260,8 +260,9 @@ class DownloadManager {
     return progress;
   }
 
-  Future<List<DownloadTask?>> whenDownloadsComplete(List<String> urls) async {
-    var completer = Completer<List<DownloadTask?>>();
+  Future<List<DownloadTask?>?> whenBatchDownloadsComplete(List<String> urls,
+      {Duration timeout = const Duration(hours: 2)}) async {
+    var completer = Completer<List<DownloadTask?>?>();
 
     var completed = 0;
     var total = urls.length;
