@@ -185,6 +185,11 @@ class DownloadManager {
     _startExecution();
   }
 
+  Future<void> removeDownload(String url) async {
+    cancelDownload(url);
+    _cache.remove(url);
+  }
+
   DownloadTask? getDownload(String url) {
     return _cache[url];
   }
