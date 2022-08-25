@@ -28,8 +28,9 @@ class DownloadManager {
     return _localRepository;
   }
 
-  void Function(int, int) createCallback(url) => (int received, int total) {
-        getDownload(url)?.progress.value = received / total;
+  void Function(int, int) createCallback(url, int partialFileLength) => (int received, int total) {
+        getDownload(url)?.progress.value =
+            (received + partialFileLength) / (total + partialFileLength);
 
         if (total == -1) {}
       };
@@ -66,7 +67,7 @@ class DownloadManager {
         var partialFileLength = await partialFile.length();
 
         var response = await dio.download(url, partialFilePath + tempExtension,
-            onReceiveProgress: createCallback(url),
+            onReceiveProgress: createCallback(url, partialFileLength),
             options: Options(
               headers: {HttpHeaders.rangeHeader: 'bytes=$partialFileLength-'},
             ),
@@ -85,7 +86,9 @@ class DownloadManager {
         }
       } else {
         var response = await dio.download(url, partialFilePath,
-            onReceiveProgress: createCallback(url), cancelToken: cancelToken, deleteOnError: false);
+            onReceiveProgress: createCallback(url, 0),
+            cancelToken: cancelToken,
+            deleteOnError: false);
 
         if (response.statusCode == HttpStatus.ok) {
           await partialFile.rename(savePath);
