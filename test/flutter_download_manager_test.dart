@@ -4,9 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   var url2 = "http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg";
 
-  var url3 = 'https://cdn.jsdelivr.net/gh/flutterchina/flutter-in-action@1.0/docs/imgs/book.jpg';
+  var url3 =
+      'https://cdn.jsdelivr.net/gh/flutterchina/flutter-in-action@1.0/docs/imgs/book.jpg';
   var url = "http://app01.78x56.com/Xii_2021-03-13%2010%EF%BC%9A41.ipa";
-  var url4 = "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4";
+  var url4 =
+      "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4";
   var url5 =
       "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/Sample-Video-File-For-Testing.mp4";
   var url6 = "https://static.gtaf.org/v1/quran/static/translation-db/10";
@@ -159,7 +161,6 @@ void main() {
 
     await dl.whenBatchDownloadsComplete(urls);
   });
-
 
   test('download in batch by setting the savedDirectory only', () async {
     var dl = DownloadManager();

@@ -35,9 +35,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var url2 = "http://download.dcloud.net.cn/HBuilder.9.0.2.macosx_64.dmg";
 
-  var url3 = 'https://cdn.jsdelivr.net/gh/flutterchina/flutter-in-action@1.0/docs/imgs/book.jpg';
+  var url3 =
+      'https://cdn.jsdelivr.net/gh/flutterchina/flutter-in-action@1.0/docs/imgs/book.jpg';
   var url = "http://app01.78x56.com/Xii_2021-03-13%2010%EF%BC%9A41.ipa";
-  var url4 = "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4";
+  var url4 =
+      "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4";
   var url5 =
       "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/Sample-Video-File-For-Testing.mp4";
 
@@ -72,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           break;
                       }
                     } else {
-                      downloadManager.addDownload(
-                          url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
+                      downloadManager.addDownload(url,
+                          "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
                     }
                   });
                 },
@@ -95,13 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           break;
                       }
                     } else {
-                      downloadManager.addDownload(
-                          url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
+                      downloadManager.addDownload(url,
+                          "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
                     }
                   });
                 },
                 onDelete: (url) {
-                  var fileName = "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+                  var fileName =
+                      "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
                   var file = File(fileName);
                   file.delete();
 
@@ -132,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 break;
                             }
                           } else {
-                            downloadManager.addDownload(
-                                url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
+                            downloadManager.addDownload(url,
+                                "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
                           }
                         });
                       },
@@ -155,8 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 break;
                             }
                           } else {
-                            downloadManager.addDownload(
-                                url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
+                            downloadManager.addDownload(url,
+                                "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
                           }
                         });
                       },
@@ -178,43 +181,54 @@ class _MyHomePageState extends State<MyHomePage> {
                                 break;
                             }
                           } else {
-                            downloadManager.addDownload(
-                                url, "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
+                            downloadManager.addDownload(url,
+                                "$savedDir/${downloadManager.getFileNameFromUrl(url)}");
                           }
                         });
                       },
                       onDelete: (url) {},
                       url: url5,
                       downloadTask: downloadManager.getDownload(url5)),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(onPressed: () {
-                        downloadManager.addBatchDownloads([url3, url4, url5], savedDir);
-                        setState(() {
-
-                        });
-                      }, child: Text("Download All")),
-                      TextButton(onPressed: () {
-                        downloadManager.pauseBatchDownloads([url3, url4, url5]);
-
-                      }, child: Text("Pause All")),
-                      TextButton(onPressed: () {
-                        downloadManager.cancelBatchDownloads([url3, url4, url5]);
-                      }, child: Text("Cancel All")),
+                      TextButton(
+                          onPressed: () {
+                            downloadManager.addBatchDownloads(
+                                [url3, url4, url5], savedDir);
+                            setState(() {});
+                          },
+                          child: Text("Download All")),
+                      TextButton(
+                          onPressed: () {
+                            downloadManager
+                                .pauseBatchDownloads([url3, url4, url5]);
+                          },
+                          child: Text("Pause All")),
+                      TextButton(
+                          onPressed: () {
+                            downloadManager
+                                .cancelBatchDownloads([url3, url4, url5]);
+                          },
+                          child: Text("Cancel All")),
                     ],
                   ),
-
                   ValueListenableBuilder(
-                      valueListenable: downloadManager.getBatchDownloadProgress([url3, url4, url5]),
+                      valueListenable: downloadManager
+                          .getBatchDownloadProgress([url3, url4, url5]),
                       builder: (context, value, child) {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 4),
-                          child: LinearProgressIndicator(value: value,),
+                          child: LinearProgressIndicator(
+                            value: value,
+                          ),
                         );
                       }),
                   FutureBuilder<List<DownloadTask?>?>(
-                      future: downloadManager.whenBatchDownloadsComplete([url3, url4, url5]),
-                      builder: (BuildContext context, AsyncSnapshot<List<DownloadTask?>?> snapshot) {
+                      future: downloadManager
+                          .whenBatchDownloadsComplete([url3, url4, url5]),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<DownloadTask?>?> snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.waiting:
                             return Text(
@@ -225,16 +239,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             } else {
                               return snapshot.data != null
                                   ? Column(children: [
-                                    Text("Result"),
+                                      Text("Result"),
                                       for (var e in snapshot.data!)
-                                        e != null ? Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("${downloadManager.getFileNameFromUrl(e.request.url)}: ${e.status.value}"),
-                                        ) : Text("Not found"),
+                                        e != null
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    "${downloadManager.getFileNameFromUrl(e.request.url)}: ${e.status.value}"),
+                                              )
+                                            : Text("Not found"),
                                     ])
                                   : Text("No Downloads have been found");
                             }
-                            return Text('Result: ${snapshot.data}');
                         }
                       })
                 ],
@@ -267,11 +284,11 @@ class ListItem extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.amber,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(20))
-      ),      padding: const EdgeInsets.all(8.0),
+            border: Border.all(
+              color: Colors.amber,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(20))),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             Row(
@@ -291,7 +308,8 @@ class ListItem extends StatelessWidget {
                           builder: (context, value, child) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text("$value", style: TextStyle(fontSize: 16)),
+                              child: Text("$value",
+                                  style: TextStyle(fontSize: 16)),
                             );
                           }),
                   ],
@@ -344,24 +362,28 @@ class ListItem extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       child: LinearProgressIndicator(
                         value: value,
-                        color: downloadTask!.status.value == DownloadStatus.paused
-                            ? Colors.grey
-                            : Colors.amber,
+                        color:
+                            downloadTask!.status.value == DownloadStatus.paused
+                                ? Colors.grey
+                                : Colors.amber,
                       ),
                     );
                   }),
-            if (downloadTask != null )
+            if (downloadTask != null)
               FutureBuilder<DownloadStatus>(
                   future: downloadTask!.whenDownloadComplete(),
-                  builder: (BuildContext context, AsyncSnapshot<DownloadStatus> snapshot) {
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DownloadStatus> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return Text('I will wait till this download has been completed');
+                        return Text(
+                            'I will wait till this download has been completed');
                       default:
-                        if (snapshot.hasError)
+                        if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
-                        else
+                        } else {
                           return Text('Result: ${snapshot.data}');
+                        }
                     }
                   })
           ],

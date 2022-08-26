@@ -8,7 +8,7 @@ Flutter Download Manager
 
 Overview
 ========
-Flutter Download Manager is a Cross-Platform file downloader with Parallel and Batch Download support. Manage download task by url and be notified of status and their progress. Pause, Cancel, Queue and Resume Downloads. 
+Flutter Download Manager is a Cross-Platform file downloader with Parallel and Batch Download support. Manage download tasks by url and be notified of status and their progress. Pause, Cancel, Queue and Resume Downloads. 
 
 This package was made as I felt like there are no download managers in flutter, specially with desktop support. 
 
@@ -55,151 +55,149 @@ Please refer to `/example` folder for a working example.
 ### Simply Download a file
 
 ```dart
-    var dl = DownloadManager();
-    var url = "adasdad.com/asda.sdas";
-    dl.addDownload(url, "./test.sdas");
+var dl = DownloadManager();
+var url = "adasdad.com/asda.sdas";
+dl.addDownload(url, "./test.sdas");
 
-    DownloadTask? task = dl.getDownload(url4);
+DownloadTask? task = dl.getDownload(url4);
 
-    task?.status.addListener(() {
-      print(task.status.value);
-    });
+task?.status.addListener(() {
+  print(task.status.value);
+});
 
-    task?.progress.addListener(() {
-      print(task.progress.value);
-    });
+task?.progress.addListener(() {
+  print(task.progress.value);
+});
 
-    await dl.whenDownloadComplete(url4);
+await dl.whenDownloadComplete(url4);
 ```
 
 ### Get Download Status
 
 
 ```dart
+DownloadTask? task = dl.getDownload(url4);
 
-    DownloadTask? task = dl.getDownload(url4);
-
-    task?.status.addListener(() {
-      print(task.status.value);
-    });
-    
+task?.status.addListener(() {
+  print(task.status.value);
+});
 ```
 ### Get Download Progress
 
 
 ```dart
-    DownloadTask? task = dl.getDownload(url4);
+DownloadTask? task = dl.getDownload(url4);
 
-    task?.progress.addListener(() {
-      print(task.progress.value);
-    });
+task?.progress.addListener(() {
+  print(task.progress.value);
+});
 ```
 
 ### Await for a task to be complete
 
 ```dart
-    DownloadTask? task = dl.getDownload(url4);
+DownloadTask? task = dl.getDownload(url4);
 
-    await task.whenDownloadComplete();
+await task.whenDownloadComplete();
 ```
 
 ### Cancel a task
 
   ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-      dl.cancelDownload(url5);
+dl.cancelDownload(url5);
 ```
 
 ### Pause a task
 
   ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-      dl.pauseDownload(url5);
+dl.pauseDownload(url5);
 ```
 
 ### Resume a task
 
   ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-      dl.resumeDownload(url5);
+dl.resumeDownload(url5);
 ```
 
 ### Download in Batch
 
 ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-    var urls = <String>[];
-    urls.add(url2);
-    urls.add(url3);
-    urls.add(url);
+var urls = <String>[];
+urls.add(url2);
+urls.add(url3);
+urls.add(url);
 
-    dl.addDownload(url2, "./test2.ipa");
-    dl.addDownload(url3, "./test3.ipa");
-    dl.addDownload(url, "./test.ipa");
+dl.addDownload(url2, "./test2.ipa");
+dl.addDownload(url3, "./test3.ipa");
+dl.addDownload(url, "./test.ipa");
 
-    var downloadProgress = dl.getDownloadProgress(urls);
+var downloadProgress = dl.getDownloadProgress(urls);
 
-    downloadProgress.addListener(() {
-      print(downloadProgress.value);
-    });
+downloadProgress.addListener(() {
+  print(downloadProgress.value);
+});
 
-    await dl.whenDownloadsComplete(urls);
+await dl.whenDownloadsComplete(urls);
 ```
 
 ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-    var urls = <String>[];
-    urls.add(url2);
-    urls.add(url3);
-    urls.add(url);
+var urls = <String>[];
+urls.add(url2);
+urls.add(url3);
+urls.add(url);
 
-    dl.addBatchDownloads(urls, "./");
+dl.addBatchDownloads(urls, "./");
 ```
 
 ### Cancel a Batch Download
 
   ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-    var urls = <String>[];
-    urls.add(url6);
-    urls.add(url5);
-    urls.add(url);
-    
-    dl.cancelDownloads(urls);
+var urls = <String>[];
+urls.add(url6);
+urls.add(url5);
+urls.add(url);
+
+dl.cancelDownloads(urls);
 ```
 ### Get Batch Download Progress
 
 ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-    var urls = <String>[];
-    urls.add(url2);
-    urls.add(url3);
+var urls = <String>[];
+urls.add(url2);
+urls.add(url3);
 
-    var downloadProgress = dl.getDownloadProgress(urls);
+var downloadProgress = dl.getDownloadProgress(urls);
 
-    downloadProgress.addListener(() {
-      print(downloadProgress.value);
-    });
+downloadProgress.addListener(() {
+  print(downloadProgress.value);
+});
 ```
 
 ### Await for Batch Download to complete
 
 ```dart
-    var dl = DownloadManager();
+var dl = DownloadManager();
 
-    var urls = <String>[];
-    urls.add(url2);
-    urls.add(url3);
-    urls.add(url);
+var urls = <String>[];
+urls.add(url2);
+urls.add(url3);
+urls.add(url);
 
-    await dl.whenDownloadsComplete(urls);
+await dl.whenDownloadsComplete(urls);
 ```
 
 ## Future Work

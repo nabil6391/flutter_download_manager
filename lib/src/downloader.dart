@@ -16,9 +16,10 @@ class DownloadManager {
   int maxConcurrentTasks = 2;
   int runningTasks = 0;
 
-  static final DownloadManager _localRepository = new DownloadManager._internal();
+  static final DownloadManager _localRepository =
+      new DownloadManager._internal();
 
-  DownloadManager._internal() {}
+  DownloadManager._internal();
 
   factory DownloadManager({int? maxConcurrentTasks}) {
     if (maxConcurrentTasks != null) {
@@ -27,14 +28,16 @@ class DownloadManager {
     return _localRepository;
   }
 
-  void Function(int, int) createCallback(url, int partialFileLength) => (int received, int total) {
+  void Function(int, int) createCallback(url, int partialFileLength) =>
+      (int received, int total) {
         getDownload(url)?.progress.value =
             (received + partialFileLength) / (total + partialFileLength);
 
         if (total == -1) {}
       };
 
-  Future<void> download(String url, String savePath, cancelToken, {forceDownload = false}) async {
+  Future<void> download(String url, String savePath, cancelToken,
+      {forceDownload = false}) async {
     try {
       var task = getDownload(url);
 
@@ -140,7 +143,8 @@ class DownloadManager {
       var dir = Directory(savedDir);
       var isDirectory = await dir.exists();
 
-      var downloadFilename = isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
+      var downloadFilename =
+          isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
 
       _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
@@ -330,7 +334,8 @@ class DownloadManager {
       }
       var currentRequest = _queue.removeFirst();
 
-      download(currentRequest.url, currentRequest.path, currentRequest.cancelToken);
+      download(
+          currentRequest.url, currentRequest.path, currentRequest.cancelToken);
 
       await Future.delayed(Duration(milliseconds: 500), null);
     }
