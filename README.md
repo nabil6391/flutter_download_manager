@@ -1,72 +1,211 @@
-GraphView
+Flutter Download Manager
 ===========
 
-[![pub package](https://img.shields.io/pub/v/graphview.svg)](https://pub.dev/packages/graphview)
-[![pub points](https://badges.bar/graphview/pub%20points)](https://pub.dev/packages/graphview/score)
-[![popularity](https://badges.bar/graphview/popularity)](https://pub.dev/packages/graphview/score)
-[![likes](https://badges.bar/graphview/likes)](https://pub.dev/packages/graphview/score) |
-
+[![pub package](https://img.shields.io/pub/v/flutter_download_manager.svg)](https://pub.dev/packages/flutter_download_manager)
+[![pub points](https://badges.bar/flutter_download_manager/pub%20points)](https://pub.dev/packages/flutter_download_manager/score)
+[![popularity](https://badges.bar/flutter_download_manager/popularity)](https://pub.dev/packages/flutter_download_manager/score)
+[![likes](https://badges.bar/flutter_download_manager/likes)](https://pub.dev/packages/flutter_download_manager/score) |
 
 Overview
 ========
-The library is designed to support different graph layouts and currently works excellent with small graphs.
+Flutter Download Manager is a Cross-Platform file downloader with Parallel and Batch Download support. Manage download task by url and be notified of status and their progress. Pause, Cancel, Queue and Resume Downloads. 
 
-You can have a look at the flutter web implementation here:
-http://graphview.surge.sh/
+This package was made as I felt like there are no download managers in flutter, specially with desktop support. 
 
+## Features
 
-A package for automatically downloading and storing files
+* Manage download tasks by url
+* Ability to notified of status and progress changes
+* Partial Download Feature
+* Queue Downloads
+* Pause, Cancel or Resume Downloads
+* Parallel File Downloads (2 or can change)
+* Support Batch download
+
+## Platforms Supported
+
+- Linux
+- MacOS
+- Windows
+- Android 
+- iOS
+
+There are a few caveats about this package:
+- On desktop it saves the file in absolute or relative path.
+- On mobile it saves the file in absolute or relative path, but we should ask/ensure if the app has the required permissions.
+- It does not run in a background process, so when the dart application closes the manager will also shut down.
 
 ## Getting Started
 
+In your `pubspec.yaml` file add:
 
-### Creating a DownloadableFile
-
-The first step is to create a downloadable file. The simplest way to do this is using a SimpleDownloadableFile
-
-E.g. you can create one with a function (returning something can be written to file)
-
+```dart
+dependencies:
+  flutter_download_manager: any
 ```
-  File testFile = File("test_file.txt");
-  var downloadFile = DownloadableFileBasic(() => "Test string", testFile);
-```
-
-You can also, optionally, set an expiry date time to your DownloadableFileBasic class. The purpose of this is
-to have a file which is only downloaded if the expiry date on the file is newer than the one you've already downloaded
-
-### Downloading a file
-
-Insert your downloadable file into the DownloadManager
-
-```
-DownloadManager.instance().add(DownloadableFileBasic(() => "Test string", testBFile));
-
-```
-Results in the stream
-
-```
-expectLater(DownloadManager.instance().fileStream, emits(testBFile));
+Then, in your code import:
+```dart
+import 'package:flutter_download_manager/flutter_download_manager.dart';
 ```
 
-### Get notifications
+## Usage
 
-There are two streams (more in development) that you can subscribe to.
+Please refer to `/example` folder for a working example.
 
-The first will return a stream which has files in fired one at a time as they are downloaded.
+### Simply Download a file
 
+```dart
+    var dl = DownloadManager();
+    var url = "adasdad.com/asda.sdas";
+    dl.addDownload(url, "./test.sdas");
+
+    DownloadTask? task = dl.getDownload(url4);
+
+    task?.status.addListener(() {
+      print(task.status.value);
+    });
+
+    task?.progress.addListener(() {
+      print(task.progress.value);
+    });
+
+    await dl.whenDownloadComplete(url4);
 ```
-DownloadManager.instance().fileStream
+
+### Get Download Status
+
+
+```dart
+
+    DownloadTask? task = dl.getDownload(url4);
+
+    task?.status.addListener(() {
+      print(task.status.value);
+    });
+    
+```
+### Get Download Progress
+
+
+```dart
+    DownloadTask? task = dl.getDownload(url4);
+
+    task?.progress.addListener(() {
+      print(task.progress.value);
+    });
 ```
 
-The second will return a list of all files downloaded. Note: files that are already downloaded will also be
-added to this list
+### Await for a task to be complete
 
-```
-DownloadManager.instance().allFiles
+```dart
+    DownloadTask? task = dl.getDownload(url4);
+
+    await task.whenDownloadComplete();
 ```
 
-You can also clear all files. You will be notified via allFiles stream with a new empty list that this has happened
+### Cancel a task
 
+  ```dart
+    var dl = DownloadManager();
+
+      dl.cancelDownload(url5);
 ```
-DownloadManager.instance().clear();
+
+### Pause a task
+
+  ```dart
+    var dl = DownloadManager();
+
+      dl.pauseDownload(url5);
 ```
+
+### Resume a task
+
+  ```dart
+    var dl = DownloadManager();
+
+      dl.resumeDownload(url5);
+```
+
+### Download in Batch
+
+```dart
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url2);
+    urls.add(url3);
+    urls.add(url);
+
+    dl.addDownload(url2, "./test2.ipa");
+    dl.addDownload(url3, "./test3.ipa");
+    dl.addDownload(url, "./test.ipa");
+
+    var downloadProgress = dl.getDownloadProgress(urls);
+
+    downloadProgress.addListener(() {
+      print(downloadProgress.value);
+    });
+
+    await dl.whenDownloadsComplete(urls);
+```
+
+```dart
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url2);
+    urls.add(url3);
+    urls.add(url);
+
+    dl.addBatchDownloads(urls, "./");
+```
+
+### Cancel a Batch Download
+
+  ```dart
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url6);
+    urls.add(url5);
+    urls.add(url);
+    
+    dl.cancelDownloads(urls);
+```
+### Get Batch Download Progress
+
+```dart
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url2);
+    urls.add(url3);
+
+    var downloadProgress = dl.getDownloadProgress(urls);
+
+    downloadProgress.addListener(() {
+      print(downloadProgress.value);
+    });
+```
+
+### Await for Batch Download to complete
+
+```dart
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url2);
+    urls.add(url3);
+    urls.add(url);
+
+    await dl.whenDownloadsComplete(urls);
+```
+
+## Future Work
+
+[] Add in Shared Preference to survive app shutdown
+
+# DownloadStatus
+
+enum DownloadStatus { queued, downloading, completed, failed, paused, canceled }

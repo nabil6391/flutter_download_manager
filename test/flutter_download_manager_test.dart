@@ -160,6 +160,26 @@ void main() {
     await dl.whenBatchDownloadsComplete(urls);
   });
 
+
+  test('download in batch by setting the savedDirectory only', () async {
+    var dl = DownloadManager();
+
+    var urls = <String>[];
+    urls.add(url2);
+    urls.add(url3);
+    urls.add(url);
+
+    dl.addBatchDownloads(urls, "./");
+
+    var downloadProgress = dl.getBatchDownloadProgress(urls);
+
+    downloadProgress.addListener(() {
+      print(downloadProgress.value);
+    });
+
+    await dl.whenBatchDownloadsComplete(urls);
+  });
+
   test('cancel a batched download', () async {
     var dl = DownloadManager();
 
