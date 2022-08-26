@@ -12,6 +12,8 @@ Flutter Download Manager is a Cross-Platform file downloader with Parallel and B
 
 This package was made as I felt like there are no download managers in flutter, specially with desktop support. 
 
+![alt Example](files/screenshot1.png "Download Manager Example")
+
 ## Features
 
 * Manage download tasks by url
