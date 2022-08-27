@@ -13,19 +13,21 @@ class DownloadManager {
   static const partialExtension = ".partial";
   static const tempExtension = ".temp";
 
+  var tasks = StreamController<DownloadTask>();
+
   int maxConcurrentTasks = 2;
   int runningTasks = 0;
 
-  static final DownloadManager _localRepository =
+  static final DownloadManager _dm =
       new DownloadManager._internal();
 
   DownloadManager._internal();
 
   factory DownloadManager({int? maxConcurrentTasks}) {
     if (maxConcurrentTasks != null) {
-      _localRepository.maxConcurrentTasks = maxConcurrentTasks;
+      _dm.maxConcurrentTasks = maxConcurrentTasks;
     }
-    return _localRepository;
+    return _dm;
   }
 
   void Function(int, int) createCallback(url, int partialFileLength) =>
@@ -101,8 +103,7 @@ class DownloadManager {
       var task = getDownload(url)!;
       if (task.status.value != DownloadStatus.canceled &&
           task.status.value != DownloadStatus.paused) {
-        task.status.value = DownloadStatus.failed;
-        disposeNotifiers(task);
+        setStatus(task, DownloadStatus.failed);
         runningTasks--;
 
         if (_queue.isNotEmpty) {
@@ -128,6 +129,7 @@ class DownloadManager {
     if (task != null) {
       task.status.value = status;
 
+      tasks.add(task);
       if (status.isCompleted) {
         disposeNotifiers(task);
       }
@@ -162,7 +164,7 @@ class DownloadManager {
       print("Pause Download");
     }
     var task = getDownload(url)!;
-    task.status.value = DownloadStatus.paused;
+    setStatus(task, DownloadStatus.paused);
     task.request.cancelToken.cancel();
 
     _queue.remove(task.request);
@@ -173,7 +175,7 @@ class DownloadManager {
       print("Cancel Download");
     }
     var task = getDownload(url)!;
-    task.status.value = DownloadStatus.canceled;
+    setStatus(task,DownloadStatus.canceled);
     _queue.remove(task.request);
     task.request.cancelToken.cancel();
   }
@@ -183,7 +185,7 @@ class DownloadManager {
       print("Resume Download");
     }
     var task = getDownload(url)!;
-    task.status.value = DownloadStatus.downloading;
+    setStatus(task, DownloadStatus.downloading);
     task.request.cancelToken = CancelToken();
     _queue.add(task.request);
 
