@@ -1,6 +1,6 @@
 name: flutter_download_manager
 description: Flutter Download Manager is a Cross-Platform file downloader with resumeable, parallel and batch Download support. Also be notified of download status and progress updates
-version: 0.5.1
+version: 0.5.2
 homepage: https://github.com/nabil6391/flutter_download_manager
 
 environment:
