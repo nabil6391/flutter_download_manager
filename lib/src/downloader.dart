@@ -136,27 +136,37 @@ class DownloadManager {
     }
   }
 
-  Future<void> addDownload(String url, String savedDir) async {
+  Future<DownloadTask?> addDownload(String url, String savedDir) async {
     if (url.isNotEmpty) {
       if (savedDir.isEmpty) {
         savedDir = ".";
       }
 
-      var dir = Directory(savedDir);
-      var isDirectory = await dir.exists();
+      var isDirectory = await Directory(savedDir).exists();
+      var downloadFilename = isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
 
-      var downloadFilename =
-          isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
-
-      _addDownloadRequest(DownloadRequest(url, downloadFilename));
+      return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
   }
 
-  Future<void> _addDownloadRequest(DownloadRequest downloadRequest) async {
+  Future<DownloadTask> _addDownloadRequest(DownloadRequest downloadRequest,) async {
+    if (_cache[downloadRequest.url] != null) {
+      if (_cache[downloadRequest.url]!.request == downloadRequest) {
+        // Do nothing
+        return _cache[downloadRequest.url]!;
+      } else {
+        _queue.remove(_cache[downloadRequest.url]);
+      }
+    }
+
     _queue.add(DownloadRequest(downloadRequest.url, downloadRequest.path));
-    _cache[downloadRequest.url] = DownloadTask(_queue.last);
+    var task = DownloadTask(_queue.last);
+
+    _cache[downloadRequest.url] = task;
 
     _startExecution();
+
+    return task!;
   }
 
   Future<void> pauseDownload(String url) async {
@@ -175,7 +185,7 @@ class DownloadManager {
       print("Cancel Download");
     }
     var task = getDownload(url)!;
-    setStatus(task,DownloadStatus.canceled);
+    setStatus(task, DownloadStatus.canceled);
     _queue.remove(task.request);
     task.request.cancelToken.cancel();
   }
