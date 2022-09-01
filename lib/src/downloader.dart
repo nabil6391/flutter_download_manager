@@ -153,7 +153,7 @@ class DownloadManager {
     DownloadRequest downloadRequest,
   ) async {
     if (_cache[downloadRequest.url] != null) {
-      if (_cache[downloadRequest.url]!.request == downloadRequest) {
+      if (!_cache[downloadRequest.url]!.status.value.isCompleted && _cache[downloadRequest.url]!.request == downloadRequest) {
         // Do nothing
         return _cache[downloadRequest.url]!;
       } else {
