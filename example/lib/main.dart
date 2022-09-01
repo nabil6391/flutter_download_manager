@@ -79,7 +79,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   });
                 },
-                onDelete: (url) {},
+                onDelete: (url) {
+                  var fileName =
+                      "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+                  var file = File(fileName);
+                  file.delete();
+
+                  downloadManager.removeDownload(url);
+                  setState(() {});
+                },
                 url: url,
                 downloadTask: downloadManager.getDownload(url)),
             ListItem(
@@ -109,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   file.delete();
 
                   downloadManager.removeDownload(url);
+                  setState(() {});
                 },
                 url: url2,
                 downloadTask: downloadManager.getDownload(url2)),
@@ -140,7 +149,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         });
                       },
-                      onDelete: (url) {},
+                      onDelete: (url) {
+                        var fileName =
+                            "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+                        var file = File(fileName);
+                        file.delete();
+
+                        downloadManager.removeDownload(url);
+                        setState(() {});
+                      },
                       url: url3,
                       downloadTask: downloadManager.getDownload(url3)),
                   ListItem(
@@ -163,7 +180,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         });
                       },
-                      onDelete: (url) {},
+                      onDelete: (url) {
+                        var fileName =
+                            "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+                        var file = File(fileName);
+                        file.delete();
+
+                        downloadManager.removeDownload(url);
+                        setState(() {});
+                      },
                       url: url4,
                       downloadTask: downloadManager.getDownload(url4)),
                   ListItem(
@@ -186,7 +211,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         });
                       },
-                      onDelete: (url) {},
+                      onDelete: (url) {
+                        var fileName =
+                            "$savedDir/${downloadManager.getFileNameFromUrl(url)}";
+                        var file = File(fileName);
+                        file.delete();
+
+                        downloadManager.removeDownload(url);
+                        setState(() {});
+                      },
                       url: url5,
                       downloadTask: downloadManager.getDownload(url5)),
                   Row(
