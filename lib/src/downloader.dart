@@ -18,8 +18,7 @@ class DownloadManager {
   int maxConcurrentTasks = 2;
   int runningTasks = 0;
 
-  static final DownloadManager _dm =
-      new DownloadManager._internal();
+  static final DownloadManager _dm = new DownloadManager._internal();
 
   DownloadManager._internal();
 
@@ -143,13 +142,16 @@ class DownloadManager {
       }
 
       var isDirectory = await Directory(savedDir).exists();
-      var downloadFilename = isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
+      var downloadFilename =
+          isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
 
       return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
   }
 
-  Future<DownloadTask> _addDownloadRequest(DownloadRequest downloadRequest,) async {
+  Future<DownloadTask> _addDownloadRequest(
+    DownloadRequest downloadRequest,
+  ) async {
     if (_cache[downloadRequest.url] != null) {
       if (_cache[downloadRequest.url]!.request == downloadRequest) {
         // Do nothing
@@ -166,7 +168,7 @@ class DownloadManager {
 
     _startExecution();
 
-    return task!;
+    return task;
   }
 
   Future<void> pauseDownload(String url) async {
