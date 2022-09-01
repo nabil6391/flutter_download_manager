@@ -13,7 +13,7 @@ class DownloadManager {
   static const partialExtension = ".partial";
   static const tempExtension = ".temp";
 
-  var tasks = StreamController<DownloadTask>();
+  // var tasks = StreamController<DownloadTask>();
 
   int maxConcurrentTasks = 2;
   int runningTasks = 0;
@@ -129,7 +129,7 @@ class DownloadManager {
     if (task != null) {
       task.status.value = status;
 
-      tasks.add(task);
+      // tasks.add(task);
       if (status.isCompleted) {
         disposeNotifiers(task);
       }
