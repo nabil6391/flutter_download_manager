@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'package:collection/collection.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -260,27 +261,44 @@ class DownloadManager {
 
   ValueNotifier<double> getBatchDownloadProgress(List<String> urls) {
     ValueNotifier<double> progress = ValueNotifier(0);
-
-    var completed = 0;
     var total = urls.length;
+
+    if (total == 0){
+      return progress;
+    }
+
+    if (total == 1){
+      return getDownload(urls.first)?.progress ?? progress;
+    }
+
+    var progressMap = Map<String, double>();
 
     urls.forEach((url) {
       DownloadTask? task = getDownload(url);
 
       if (task != null) {
-        if (task.status.value.isCompleted) {
-          completed++;
+        progressMap [url] = 0.0;
 
-          progress.value = completed / total;
+        if (task.status.value.isCompleted) {
+          progressMap[url] =  1.0;
+          progress.value = progressMap.values.sum / total;
         }
+
+        var progressListener;
+        progressListener = () {
+          progressMap[url] = task.progress.value;
+          progress.value = progressMap.values.sum / total;
+        };
+
+        task.progress.addListener(progressListener);
 
         var listener;
         listener = () {
           if (task.status.value.isCompleted) {
-            completed++;
-
-            progress.value = completed / total;
+            progressMap[url] =  1.0;
+            progress.value = progressMap.values.sum / total;
             task.status.removeListener(listener);
+            task.progress.removeListener(progressListener);
           }
         };
 
