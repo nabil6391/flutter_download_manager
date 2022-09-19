@@ -16,9 +16,7 @@ void main() {
   test('future download', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url4, "./test.mp4");
-
-    DownloadTask? task = dl.getDownload(url4);
+    DownloadTask? task = await dl.addDownload(url4, "./test.mp4");
 
     task?.status.addListener(() {
       print(task.status.value);
@@ -34,23 +32,17 @@ void main() {
   test('parallel download', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url2, "./test2.ipa");
-    dl.addDownload(url3, "./test3.ipa");
-    dl.addDownload(url, "./test.ipa");
-
-    DownloadTask? task = dl.getDownload(url);
+    DownloadTask? task = await dl.addDownload(url2, "./test2.ipa");
+    DownloadTask? task2 = await  dl.addDownload(url3, "./test3.ipa");
+    DownloadTask? task3 = await dl.addDownload(url, "./test.ipa");
 
     task?.status.addListener(() {
       print(task.status.value);
     });
 
-    DownloadTask? task2 = dl.getDownload(url2);
-
     task2?.status.addListener(() {
       print(task2.status.value);
     });
-
-    DownloadTask? task3 = dl.getDownload(url3);
 
     task3?.status.addListener(() {
       print(task3.status.value);
@@ -62,9 +54,7 @@ void main() {
   test('cancel download', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url5, "./test2.mp4");
-
-    DownloadTask? task = dl.getDownload(url5);
+    DownloadTask? task = await dl.addDownload(url5, "./test2.mp4");
 
     Future.delayed(Duration(milliseconds: 500), () {
       dl.cancelDownload(url5);
@@ -80,9 +70,7 @@ void main() {
   test('pause and resume download', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url5, "./test2.mp4");
-
-    DownloadTask? task = dl.getDownload(url5);
+    DownloadTask? task = await dl.addDownload(url5, "./test2.mp4");
 
     Future.delayed(Duration(milliseconds: 500), () {
       dl.pauseDownload(url5);
@@ -102,9 +90,7 @@ void main() {
   test('handle empty url', () async {
     var dl = DownloadManager();
 
-    dl.addDownload("", "");
-
-    DownloadTask? task = dl.getDownload("");
+    DownloadTask? task = await dl.addDownload("", "");
 
     task?.status.addListener(() {
       print(task.status.value);
@@ -116,9 +102,7 @@ void main() {
   test('handle empty path', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url3, "");
-
-    DownloadTask? task = dl.getDownload(url3);
+    DownloadTask? task = await dl.addDownload(url3, "");
 
     task?.status.addListener(() {
       print(task.status.value);
@@ -130,9 +114,7 @@ void main() {
   test('handle url with empty extension', () async {
     var dl = DownloadManager();
 
-    dl.addDownload(url6, "");
-
-    DownloadTask? task = dl.getDownload(url6);
+    DownloadTask? task = await dl.addDownload(url6, "");
 
     task?.status.addListener(() {
       print(task.status.value);
@@ -149,9 +131,9 @@ void main() {
     urls.add(url3);
     urls.add(url);
 
-    dl.addDownload(url2, "./test2.ipa");
-    dl.addDownload(url3, "./test3.ipa");
-    dl.addDownload(url, "./test.ipa");
+    await dl.addDownload(url2, "./test2.ipa");
+    await dl.addDownload(url3, "./test3.ipa");
+    await dl.addDownload(url, "./test.ipa");
 
     var downloadProgress = dl.getBatchDownloadProgress(urls);
 
