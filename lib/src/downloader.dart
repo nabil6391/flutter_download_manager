@@ -209,6 +209,7 @@ class DownloadManager {
     _cache.remove(url);
   }
 
+  // Do not immediately call getDownload After addDownload, rather use the returned DownloadTask from addDownload
   DownloadTask? getDownload(String url) {
     return _cache[url];
   }
