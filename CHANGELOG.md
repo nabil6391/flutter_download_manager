@@ -1,3 +1,7 @@
+## [0.5.4] - Bug Fixes
+
+* Improve batch progress notification to notify more granular
+
 ## [0.5.3] - Bug Fixes
 
 * Disable Streams temporarily to fix bad state bugs
