@@ -3,6 +3,7 @@
 # Files and directories created by pub
 .dart_tool/
 .idea/
+.vscode/
 .packages
 build/
 # If you're building an application, you may want to check-in your pubspec.lock
@@ -25,3 +26,10 @@ doc/api/
 /.flutter-plugins
 /flutter_download_manager.iml
 /example/.metadata
+
+# test files
+10
+book.jpg
+*.dmg.*
+*.mp4
+*.ipa

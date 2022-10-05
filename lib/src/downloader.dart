@@ -143,8 +143,9 @@ class DownloadManager {
       }
 
       var isDirectory = await Directory(savedDir).exists();
-      var downloadFilename =
-          isDirectory ? savedDir + "/" + getFileNameFromUrl(url) : savedDir;
+      var downloadFilename = isDirectory
+          ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
+          : savedDir;
 
       return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
@@ -154,7 +155,8 @@ class DownloadManager {
     DownloadRequest downloadRequest,
   ) async {
     if (_cache[downloadRequest.url] != null) {
-      if (!_cache[downloadRequest.url]!.status.value.isCompleted && _cache[downloadRequest.url]!.request == downloadRequest) {
+      if (!_cache[downloadRequest.url]!.status.value.isCompleted &&
+          _cache[downloadRequest.url]!.request == downloadRequest) {
         // Do nothing
         return _cache[downloadRequest.url]!;
       } else {
@@ -263,11 +265,11 @@ class DownloadManager {
     ValueNotifier<double> progress = ValueNotifier(0);
     var total = urls.length;
 
-    if (total == 0){
+    if (total == 0) {
       return progress;
     }
 
-    if (total == 1){
+    if (total == 1) {
       return getDownload(urls.first)?.progress ?? progress;
     }
 
@@ -277,10 +279,10 @@ class DownloadManager {
       DownloadTask? task = getDownload(url);
 
       if (task != null) {
-        progressMap [url] = 0.0;
+        progressMap[url] = 0.0;
 
         if (task.status.value.isCompleted) {
-          progressMap[url] =  1.0;
+          progressMap[url] = 1.0;
           progress.value = progressMap.values.sum / total;
         }
 
@@ -295,7 +297,7 @@ class DownloadManager {
         var listener;
         listener = () {
           if (task.status.value.isCompleted) {
-            progressMap[url] =  1.0;
+            progressMap[url] = 1.0;
             progress.value = progressMap.values.sum / total;
             task.status.removeListener(listener);
             task.progress.removeListener(progressListener);
