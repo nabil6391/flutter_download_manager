@@ -229,7 +229,7 @@ class DownloadManager {
   }
 
   List<DownloadTask> getAllDownloads() {
-    return _cache.values as List<DownloadTask>;
+    return _cache.values.toList();
   }
 
   // Batch Download Mechanism
