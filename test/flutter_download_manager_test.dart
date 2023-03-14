@@ -48,7 +48,7 @@ void main() {
       print(task3.status.value);
     });
 
-    await dl.whenBatchDownloadsComplete([url, url2, url3]);
+    await dl.whenBatchDownloadsComplete([url, url2, url3], timeout: Duration(seconds: 20));
   });
 
   test('cancel download', () async {
@@ -65,6 +65,8 @@ void main() {
     });
 
     await Future.delayed(Duration(seconds: 10), null);
+
+    assert(task?.status.value == DownloadStatus.canceled);
   });
 
   test('pause and resume download', () async {
@@ -85,18 +87,21 @@ void main() {
     });
 
     await Future.delayed(Duration(seconds: 20), null);
+
+    assert(task?.status.value == DownloadStatus.completed);
   });
 
   test('handle empty url', () async {
     var dl = DownloadManager();
 
-    DownloadTask? task = await dl.addDownload("", "");
+    var url = "";
+    DownloadTask? task = await dl.addDownload(url, "");
 
     task?.status.addListener(() {
       print(task.status.value);
     });
 
-    await dl.whenDownloadComplete("");
+    var error = dl.whenDownloadComplete(url);
   });
 
   test('handle empty path', () async {
