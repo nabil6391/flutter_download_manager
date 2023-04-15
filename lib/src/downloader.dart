@@ -23,10 +23,16 @@ class DownloadManager {
 
   DownloadManager._internal();
 
-  factory DownloadManager({int? maxConcurrentTasks}) {
+  factory DownloadManager({
+    int? maxConcurrentTasks,
+    Dio? dio,
+  }) {
     if (maxConcurrentTasks != null) {
       _dm.maxConcurrentTasks = maxConcurrentTasks;
     }
+
+    _dm.dio = dio ?? Dio();
+
     return _dm;
   }
 
