@@ -59,7 +59,7 @@ Please refer to `/example` folder for a working example.
 ```dart
 var dl = DownloadManager();
 var url = "adasdad.com/asda.sdas";
-dl.addDownload(url, "./test.sdas");
+await dl.addDownload(url, "./test.sdas");
 
 DownloadTask? task = dl.getDownload(url4);
 
@@ -137,9 +137,9 @@ urls.add(url2);
 urls.add(url3);
 urls.add(url);
 
-dl.addDownload(url2, "./test2.ipa");
-dl.addDownload(url3, "./test3.ipa");
-dl.addDownload(url, "./test.ipa");
+await dl.addDownload(url2, "./test2.ipa");
+await dl.addDownload(url3, "./test3.ipa");
+await dl.addDownload(url, "./test.ipa");
 
 var downloadProgress = dl.getDownloadProgress(urls);
 
