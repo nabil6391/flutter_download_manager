@@ -19,4 +19,7 @@ dev_dependencies:
   lints: ^2.0.1
 
 flutter:
-
+  plugin:
+    platforms:
+      web:
+        default_package: flutter_download_manager
