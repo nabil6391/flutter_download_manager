@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:universal_html/html.dart';
 
 class WebUtils {
   static downloadBlobFile({required data, required String filename}) {
