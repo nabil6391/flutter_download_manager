@@ -132,7 +132,7 @@ class ListItem extends StatelessWidget {
                           if (downloadTask!.status.value ==
                               DownloadStatus.completed) {
 
-                            downloadBlobFile(downloadTask!.blobUrl!, url.split('/').last);
+                            downloadBlobUrl(downloadTask!.blobUrl!, url.split('/').last);
                           }
 
                           switch (downloadTask!.status.value) {
