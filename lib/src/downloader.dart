@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
+import 'package:flutter_download_manager/src/web_utils.dart';
 
 class DownloadManager {
   final Map<String, DownloadTask> _cache = <String, DownloadTask>{};
@@ -135,6 +136,57 @@ class DownloadManager {
     }
   }
 
+  Future<void> downloadWeb(String url, cancelToken,
+      {forceDownload = false}) async {
+    try {
+      var task = getDownload(url);
+
+      if (task == null || task.status.value == DownloadStatus.canceled) {
+        return;
+      }
+      setStatus(task, DownloadStatus.downloading);
+
+      if (kDebugMode) {
+        print(url);
+      }
+
+      var response = await dio.request(
+        url,
+        onReceiveProgress: createCallback(url, 0),
+        cancelToken: cancelToken,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200) {
+        task.blobUrl = WebUtils.getBlobUrl(
+          data: response.data,
+        );
+
+        _cache[task.request.url] = task;
+
+        setStatus(task, DownloadStatus.completed);
+      }
+    } catch (e) {
+      var task = getDownload(url)!;
+      if (task.status.value != DownloadStatus.canceled &&
+          task.status.value != DownloadStatus.paused) {
+        setStatus(task, DownloadStatus.failed);
+        runningTasks--;
+
+        if (_queue.isNotEmpty) {
+          _startExecution();
+        }
+        rethrow;
+      }
+    }
+
+    runningTasks--;
+
+    if (_queue.isNotEmpty) {
+      _startExecution();
+    }
+  }
+
   void disposeNotifiers(DownloadTask task) {
     // task.status.dispose();
     // task.progress.dispose();
@@ -152,18 +204,25 @@ class DownloadManager {
   }
 
   Future<DownloadTask?> addDownload(String url, String savedDir) async {
+    var downloadFilename;
     if (url.isNotEmpty) {
-      if (savedDir.isEmpty) {
-        savedDir = ".";
-      }
+      if (!kIsWeb) {
+        if (savedDir.isEmpty) {
+          savedDir = ".";
+        }
 
-      var isDirectory = await Directory(savedDir).exists();
-      var downloadFilename = isDirectory
-          ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
-          : savedDir;
+        var isDirectory = await Directory(savedDir).exists();
+        downloadFilename = isDirectory
+            ? savedDir + Platform.pathSeparator + getFileNameFromUrl(url)
+            : savedDir;
+      } else {
+        downloadFilename = getFileNameFromUrl(url);
+      }
 
       return _addDownloadRequest(DownloadRequest(url, downloadFilename));
     }
+
+    return null;
   }
 
   Future<DownloadTask> _addDownloadRequest(
@@ -384,8 +443,18 @@ class DownloadManager {
       }
       var currentRequest = _queue.removeFirst();
 
-      download(
-          currentRequest.url, currentRequest.path, currentRequest.cancelToken);
+      if (kIsWeb) {
+        downloadWeb(
+          currentRequest.url,
+          currentRequest.cancelToken,
+        );
+      } else {
+        download(
+          currentRequest.url,
+          currentRequest.path,
+          currentRequest.cancelToken,
+        );
+      }
 
       await Future.delayed(Duration(milliseconds: 500), null);
     }

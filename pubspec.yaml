@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^5.0.2
+  universal_html: ^2.2.4
   collection:
 
 dev_dependencies:
@@ -19,4 +20,7 @@ dev_dependencies:
   lints: ^2.0.1
 
 flutter:
-
+  plugin:
+    platforms:
+      web:
+        default_package: flutter_download_manager
