@@ -1,3 +1,4 @@
+import 'package:example/download_blob_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 
@@ -128,6 +129,12 @@ class ListItem extends StatelessWidget {
                     ? ValueListenableBuilder(
                         valueListenable: downloadTask!.status,
                         builder: (context, value, child) {
+                          if (downloadTask!.status.value ==
+                              DownloadStatus.completed) {
+
+                            downloadBlobFile(downloadTask!.blobUrl!, url.split('/').last);
+                          }
+
                           switch (downloadTask!.status.value) {
                             case DownloadStatus.downloading:
                               return IconButton(

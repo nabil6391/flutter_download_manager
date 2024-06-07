@@ -8,6 +8,9 @@ class DownloadTask {
   ValueNotifier<DownloadStatus> status = ValueNotifier(DownloadStatus.queued);
   ValueNotifier<double> progress = ValueNotifier(0);
 
+  /// For preserve blob url next download in web
+  String? blobUrl;
+
   DownloadTask(
     this.request,
   );

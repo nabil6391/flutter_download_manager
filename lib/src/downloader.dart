@@ -158,10 +158,11 @@ class DownloadManager {
       );
 
       if (response.statusCode == 200) {
-        WebUtils.downloadBlobFile(
+        task.blobUrl = WebUtils.getBlobUrl(
           data: response.data,
-          filename: getFileNameFromUrl(url),
         );
+
+        _cache[task.request.url] = task;
 
         setStatus(task, DownloadStatus.completed);
       }
